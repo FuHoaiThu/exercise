@@ -9,6 +9,7 @@ export default new Vuex.Store({
     state: {
         users:[],
         filterUser: [],
+        filteredIdUser:[],
         choosenUser: [],
         searchWord: null,
     },
@@ -54,11 +55,6 @@ export default new Vuex.Store({
         }
     },
     mutations: {
-        showProductChoosed(state, product) {
-            state.chooseProduct.push({
-                title: product.title
-            })
-        },
         SET_USER(state, user) {
             state.users = user
         },
@@ -70,7 +66,11 @@ export default new Vuex.Store({
             state.searchWord = word
             word = word.trim().toLowerCase()
             state.filterUser = state.users.filter(user => {
-                return user.name.toLowerCase().includes(word)
+                let hasUserChoose = state.choosenUser.find(item => {
+                    return item.id == user.id
+                })
+                console.log(hasUserChoose)
+                return (user.name.toLowerCase().includes(word) && (!hasUserChoose))
             })
         },
         USER_CHOOSEN(state, user) {
@@ -82,10 +82,10 @@ export default new Vuex.Store({
         DELETE_FILTER_USER(state, user) {
             let index = state.filterUser.indexOf(user)
             state.filterUser.splice(index, 1)
+            state.searchWord=null
         },
         DELETE_USER_CHOOSEN(state, user) {
             let index = state.choosenUser.indexOf(user)
-            console.log(index)
             state.choosenUser.splice(index, 1)
             state.filterUser.push(user)
         }

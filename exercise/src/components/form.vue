@@ -8,17 +8,24 @@
         <label class="search-form__lable">先輩や同僚、上司を検索</label>
         <div class="search-box__input" v-bind:class="{ choosen: true }">
           <input
+            ref="input"
             autocomplete="off"
             type="text"
             class="w-100 search-form__input"
             placeholder="検索してください"
             v-model="searchWord"
+            v-bind:style="styleInput"
           />
           <div class="search-form__icon">
             <img src="../assets/search.svg" class="w-100" />
           </div>
           <div v-if="hasChoose">
-            <ChoosenUser :choosenUser="choosenUser"></ChoosenUser>
+            <ChoosenUser
+              :choosenUser="choosenUser"
+              @childWidth="changeInputWidth"
+              @childHeight="changeInputHeight"
+              @childTop="changeInputTop"
+            ></ChoosenUser>
           </div>
         </div>
         <div class="data-list">
@@ -28,7 +35,7 @@
               :key="index"
               @click="chooseUser(user)"
             >
-              {{ user.name }}
+              {{ user.name }} {{ user.choose }}
             </li>
           </ul>
         </div>
@@ -53,6 +60,17 @@
 import ChoosenUser from "./chooseUser.vue";
 
 export default {
+  data() {
+    return {
+      newWidth: 0,
+      newHeight: 0,
+      styleInput: {
+        "padding-left": "",
+        "padding-top": "",
+        height: ""
+      }
+    };
+  },
   components: {
     ChoosenUser
   },
@@ -75,9 +93,9 @@ export default {
       return this.$store.getters.getChoosenUser;
     }
   },
-  created() {},
   mounted() {
     this.$store.dispatch("getUser");
+    this.$refs.input.focus();
   },
   methods: {
     chooseUser(user) {
@@ -87,6 +105,26 @@ export default {
       if (this.choosenUser > 0) {
         return true;
       } else return 0;
+    },
+    changeInputWidth(value) {
+      if (!this.choosenUser.length) {
+        this.styleInput["padding-left"] = "40px";
+      } else {
+        this.newWidth = value;
+        this.styleInput["padding-left"] = this.newWidth + 40 + "px";
+        // this.$refs.input.focus();
+      }
+    },
+    changeInputHeight(value) {
+      if (value === 0) {
+        this.height = "heifht: 40px";
+      } else {
+        this.newHeight = value;
+        this.styleInput.height = this.newHeight + 8 + "px";
+      }
+    },
+    changeInputTop(value) {
+      this.styleInput["padding-top"] = value + "px";
     }
   }
 };
@@ -219,6 +257,7 @@ export default {
 }
 .data-list__wrapper li:hover {
   background-color: #627d98;
+  color: #fff;
 }
 .displayNone {
   display: none;
