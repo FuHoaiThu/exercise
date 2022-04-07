@@ -41,7 +41,10 @@
         <div class="aline"></div>
       </div>
       <div class="search-btn">
-        <p class="search-btn__content">メンバーを追加する</p>
+        <button></button>
+        <p class="search-btn__content">
+          メンバーを追加する
+        </p>
       </div>
     </div>
   </div>
@@ -170,6 +173,36 @@ export default {
   font-size: 1rem;
   line-height: 22px;
   color: #666;
+  display: inline-block;
+  vertical-align: middle;
+}
+.search-btn button {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  border-radius: 50%;
+  border: none;
+  background-color: #627d98;
+  display: inline-block;
+  vertical-align: middle;
+}
+.search-btn button::before {
+  content: "";
+  width: 13px;
+  height: 2px;
+  background-color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.search-btn button::after {
+  content: "";
+  width: 13px;
+  height: 2px;
+  background-color: #fff;
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(90deg);
 }
 .data-list {
   width: 100%;
