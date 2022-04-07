@@ -48,7 +48,7 @@ export default new Vuex.Store({
         },
         choosenUser({state, commit}, user) {
             commit("USER_CHOOSEN", user)
-            commit('DELETE_FILTER_USER', user)
+            // commit('DELETE_FILTER_USER', user)
         },
         removeChoosenUser({state, commit}, user) {
             commit("DELETE_USER_CHOOSEN", user)
@@ -77,12 +77,14 @@ export default new Vuex.Store({
                 id: user.id,
                 name: user.name
             })
+            state.filterUser = []
+            state.searchWord = null
         },
-        DELETE_FILTER_USER(state, user) {
-            let index = state.filterUser.indexOf(user)
-            state.filterUser.splice(index, 1)
-            state.searchWord=null
-        },
+        // DELETE_FILTER_USER(state, user) {
+        //     let index = state.filterUser.indexOf(user)
+        //     state.filterUser.splice(index, 1)
+        //     state.searchWord=null
+        // },
         DELETE_USER_CHOOSEN(state, user) {
             let index = state.choosenUser.indexOf(user)
             state.choosenUser.splice(index, 1)
