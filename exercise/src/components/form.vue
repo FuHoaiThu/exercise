@@ -15,6 +15,7 @@
             placeholder="検索してください"
             v-model="searchWord"
             v-bind:style="styleInput"
+            v-on:key-up.13.prevent=""
           />
           <div class="search-form__icon">
             <img src="../assets/search.svg" class="w-100" />
@@ -160,6 +161,7 @@ export default {
   max-width: 528px;
   height: 40px;
   padding: 0 0 0 42px;
+  outline: none;
 }
 .search-form__input::placeholder {
   padding: 12px 0;
@@ -178,6 +180,10 @@ export default {
   top: 50%;
   left: 10px;
   transform: translate(0, -50%);
+  -moz-transform: translate(0, -50%);
+  -webkit-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
 }
 .form-cont {
   margin: 25px 0 25px 12px;
@@ -233,6 +239,11 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
 }
 .search-btn button::after {
   content: "";
@@ -241,6 +252,11 @@ export default {
   background-color: #fff;
   position: absolute;
   transform: translate(-50%, -50%) rotate(90deg);
+  transform: translate(-50%, -50%) rotate(90deg);
+  -moz-transform: translate(-50%, -50%) rotate(90deg);
+  -webkit-transform: translate(-50%, -50%) rotate(90deg);
+  -o-transform: translate(-50%, -50%) rotate(90deg);
+  -ms-transform: translate(-50%, -50%) rotate(90deg);
 }
 .data-list {
   width: 100%;

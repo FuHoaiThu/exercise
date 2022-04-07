@@ -69,7 +69,6 @@ export default new Vuex.Store({
                 let hasUserChoose = state.choosenUser.find(item => {
                     return item.id == user.id
                 })
-                console.log(hasUserChoose)
                 return (user.name.toLowerCase().includes(word) && (!hasUserChoose))
             })
         },
