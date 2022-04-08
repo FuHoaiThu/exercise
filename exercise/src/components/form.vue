@@ -20,7 +20,7 @@
           <div class="search-form__icon">
             <img src="../assets/search.svg" class="w-100" />
           </div>
-          <div v-if="hasChoose">
+          <div v-if="hasChoose" class="sticky">
             <ChoosenUser
               :choosenUser="choosenUser"
               @childWidth="changeInputWidth"
@@ -113,7 +113,7 @@ export default {
       } else {
         this.newWidth = value;
         this.styleInput["padding-left"] = this.newWidth + 40 + "px";
-        // this.$refs.input.focus();
+        this.$refs.input.focus();
       }
     },
     changeInputHeight(value) {
@@ -261,6 +261,9 @@ export default {
 .data-list {
   width: 100%;
   border: 1px solid #dcdcdc;
+  position: fixed;
+  background-color: #fff;
+  z-index: 1;
 }
 .data-list__wrapper {
   padding-top: 4px;
