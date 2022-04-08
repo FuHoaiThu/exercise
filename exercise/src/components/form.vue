@@ -15,12 +15,12 @@
             placeholder="検索してください"
             v-model="searchWord"
             v-bind:style="styleInput"
-            v-on:key-up.13.prevent=""
+            v-on:key-up.13.prevent="submit"
           />
           <div class="search-form__icon">
             <img src="../assets/search.svg" class="w-100" />
           </div>
-          <div v-if="hasChoose" class="sticky">
+          <div v-if="hasChoose" @click="clickSearch">
             <ChoosenUser
               :choosenUser="choosenUser"
               @childWidth="changeInputWidth"
@@ -126,6 +126,9 @@ export default {
     },
     changeInputTop(value) {
       this.styleInput["padding-top"] = value + "px";
+    },
+    clickSearch() {
+      this.$refs.input.focus();
     }
   }
 };
