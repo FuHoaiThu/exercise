@@ -88,7 +88,8 @@ export default new Vuex.Store({
         DELETE_USER_CHOOSEN(state, user) {
             let index = state.choosenUser.indexOf(user)
             state.choosenUser.splice(index, 1)
-            state.filterUser.push(user)
+            //state.filterUser.push(user)
+            state.filterUser = []
         }
     }
 })
