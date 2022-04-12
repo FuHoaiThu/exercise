@@ -24,44 +24,110 @@
       </div>
       <!--tab content-->
       <div class="tabs-content tabs-wrapper">
+        <!--input field-->
         <div
           class="input-field"
           v-for="(field, index) in formSteps[activeStep].fields"
           :key="index"
         >
           <label class="input-field__label">{{ field.label }}</label>
-          <input
-            class="input-field__text"
-            :class="{ 'input-error': field.valid === false }"
-            type="text"
-            v-model="field.value"
-            required="required"
-            @click="checkField(field)"
-            @keyup="checkField(field)"
-          />
+          <div class="position-relative">
+            <input
+              class="input-field__text"
+              :class="{ 'input-error': !field.valid }"
+              type="text"
+              v-model="field.value"
+              value="field.value"
+              required="required"
+              @click.prevent="checkField(field)"
+              @keyup="checkField(field)"
+            />
+          </div>
           <p
             class="input-field__error"
             :style="[field.valid ? { display: 'none' } : { display: 'block' }]"
           >
+            {{ field.error }}
+          </p>
+        </div>
+        <!--select option-->
+        <div
+          v-if="activeStep === formSteps.length - 1"
+          class="position-relative"
+        >
+          <span>{{ formSteps[activeStep].label }}</span>
+          <div
+            class="select-option position-relative"
+            :class="{ 'input-error': !choose }"
+            @click="showOption = !showOption"
+          >
+            <span class="select-option__cont">{{
+              formSteps[activeStep].value
+            }}</span>
+            <span class="input-field__icon"></span>
+          </div>
+          <p
+            class="input-field__error"
+            :style="[choose ? { display: 'none' } : { display: 'block' }]"
+          >
             The field is required!
           </p>
+          <div class="select-option__list" v-if="showOption">
+            <ul>
+              <li
+                v-for="(item, index) in options"
+                :key="index"
+                @click="selectedOption(item.value)"
+              >
+                <p>{{ item.value }}</p>
+              </li>
+            </ul>
+          </div>
+          <form class="chekbox">
+            <input type="checkbox" v-model="checked" />
+            <label> I accept terms & conditions</label>
+            <p
+              class="input-field__error p-0"
+              :style="[checked ? { display: 'none' } : { display: 'block' }]"
+            >
+              The field is required!
+            </p>
+          </form>
         </div>
       </div>
       <!--tabs action-->
       <div class="tabs-action">
+        <!--previous-->
         <button
           class="btn tabs-action__btn tabs-btn--green"
-          v-if="activeStep >= 0"
+          v-if="activeStep >= 0 && activeStep + 1 < formSteps.length"
           @click="preivousStep"
         >
           previous
         </button>
+        <!--next-->
         <button
           class="btn tabs-action__btn tabs-btn--blue"
           v-if="activeStep + 1 < formSteps.length"
           @click="checkFieldAll"
         >
           next
+        </button>
+        <!--Reset-->
+        <button
+          class="btn tabs-action__btn tabs-btn--blue"
+          v-if="activeStep === formSteps.length - 1"
+          @click="resetForm"
+        >
+          reset
+        </button>
+        <!--send-->
+        <button
+          class="btn tabs-action__btn tabs-btn--green"
+          v-if="activeStep === formSteps.length - 1"
+          @click="sendInfo(checked)"
+        >
+          send
         </button>
       </div>
     </section>
@@ -72,6 +138,10 @@ export default {
   data: () => {
     return {
       activeStep: 0,
+      choose: false,
+      checked: false,
+      checkbox: false,
+      showOption: false,
       formSteps: [
         {
           title: "About You",
@@ -80,13 +150,15 @@ export default {
               label: "Full Name",
               value: "",
               valid: true,
-              pattern: /^[A-Za-z ]+$/
+              pattern: /^[A-Za-z ]+$/,
+              error: "The field is required!"
             },
             {
               label: "Email",
               value: "",
               valid: true,
-              pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+              pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+              error: "The field is required!"
             }
           ]
         },
@@ -94,28 +166,32 @@ export default {
           title: "About your Company",
           fields: [
             {
-              label: "Address",
+              label: "Your Company Name",
               value: "",
               valid: true,
-              pattern: /.+/
+              pattern: /^[A-Za-z ]+$/,
+              error: "The field is required!"
             },
             {
-              label: "City",
+              label: "Number of Employees",
               value: "",
               valid: true,
-              pattern: /.+/
-            },
-            {
-              label: "State",
-              value: "",
-              valid: true,
-              pattern: /.+/
+              pattern: /^[0-9]+$/,
+              error: "The field is required!"
             }
           ]
         },
         {
-          title: "Finishing Up"
+          title: "Finishing Up",
+          label: "From Where did you hear about us",
+          value: "-- Choose anwser --",
+          fields: []
         }
+      ],
+      options: [
+        { value: "Friend" },
+        { value: "Facebook" },
+        { value: "Website" }
       ]
     };
   },
@@ -144,13 +220,40 @@ export default {
       }
     },
     checkField(field) {
-      console.log(field.value);
       if (field.value === "" || !field.pattern.test(field.value)) {
         field.valid = false;
       } else {
         field.valid = true;
       }
-    }
+      if (
+        field.label === "Email" &&
+        !field.pattern.test(field.value) &&
+        field.value != ""
+      ) {
+        field.error = "The field must be email!";
+      }
+      if (
+        field.label === "Number of Employees" &&
+        !field.pattern.test(field.value) &&
+        field.value != ""
+      ) {
+        field.error = "Should be a valid value!";
+      }
+    },
+    selectedOption(value) {
+      this.formSteps[this.formSteps.length - 1].value = value;
+      this.showOption = false;
+      this.choose = true;
+    },
+    resetForm() {
+      this.activeStep = 0;
+      this.formSteps.forEach(step => {
+        step.fields.forEach(field => {
+          field.value = "";
+        });
+      });
+    },
+    sendInfo(checked) {}
   }
 };
 </script>
@@ -224,29 +327,49 @@ export default {
 .input-field {
   margin-bottom: 12px;
 }
+
 .input-field__label {
   display: block;
+  font-family: "Poppins-Regular", sans-serif;
   margin-bottom: 6px;
 }
 .input-field__text {
-  color: #586068;
-  font-size: 1rem;
+  color: #000;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 0.875rem;
   width: 100%;
   padding: 8px 16px;
   border-radius: 4px;
   border: 1px solid #ccc;
   outline: none;
   transition: all 0.2s ease;
+  position: relative;
+}
+.input-field__text:focus {
+  border: 2px solid #9fbcd7;
+}
+.input-field:last-child .input-field__text {
+  cursor: pointer;
+}
+.input-field__icon {
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 6px solid #262626;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translate(0, -50%);
+  -webkit-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
 }
 .input-field__error {
   color: #aa4651;
+  font-family: "Poppins-Regular", sans-serif;
   font-size: 0.75rem;
   padding-top: 8px;
   display: none;
-}
-.input-error {
-  box-shadow: 0 0 4px #f4b6c1;
-  border: 1px solid #aa4651;
 }
 .tabs-action {
   width: 100%;
@@ -276,5 +399,52 @@ export default {
 }
 .tabs-action__btn:hover {
   box-shadow: 1px 1px 10px rgb(0 0 0 / 40%), 6px 6px 12px rgb(0 0 0 / 20%);
+}
+.select-option {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+  padding: 10px 12px;
+}
+.select-option__cont {
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 0.875rem;
+}
+.select-option__list {
+  padding: 12px 0;
+  border-radius: 12px;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+  position: absolute;
+  top: 80px;
+  left: 0;
+  transition: all 0.3s ease;
+}
+.select-option__list li {
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.select-option__list li p {
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 0.875rem;
+}
+.select-option__list li:hover {
+  background-color: #bdc3c7;
+}
+.chekbox {
+  padding-top: 20px;
+}
+.chekbox label {
+  margin-left: 6px;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 0.875rem;
+  vertical-align: top;
+}
+.input-error {
+  box-shadow: 0 0 4px #f4b6c1;
+  border: 1px solid #aa4651;
 }
 </style>
